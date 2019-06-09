@@ -5,6 +5,7 @@ RUN curl -L https://github.com/balena-io/qemu/releases/download/v3.0.0%2Bresin/q
 
 FROM arm64v8/golang:1.11-alpine
 COPY --from=builder /builder/working/directory/qemu-arm-static /usr/bin
+RUN chmod +x /usr/bin/qemu-arm-static
 COPY hello.go .
 RUN go build hello.go
 RUN find .
