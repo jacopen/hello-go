@@ -1,0 +1,36 @@
+resources:
+- name: hello
+  type: git
+  source:
+    uri: https://github.com/jacopen/hello-go.git
+- name: image
+  type: docker-image
+  source:
+    repository: jacopen/hello-go
+    tag: latest
+    username: ((username))
+    password: ((password))
+
+jobs:
+- name: register
+  build_logs_to_retain: 5
+  plan:
+  - get: hello
+    trigger: true
+  - task: register
+    privileged: true
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: multiarch/qemu-user-static
+          tag: register
+      run:
+        path: /register
+        args: 
+        - --reset
+  - put: image
+    params:
+      build: hello
+
